@@ -5,9 +5,11 @@ import com.gm.wj.entity.AdminRole;
 import com.gm.wj.entity.AdminRolePermission;
 import com.gm.wj.service.plus.AdminPermissionPlusService;
 import com.gm.wj.service.plus.AdminRolePermissionPlusService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,6 +55,9 @@ public class AdminPermissionBizService {
     public List<AdminPermission> listPermsByRoleId(int rid) {
         List<Integer> pids = adminRolePermissionBizService.findAllByRid(rid)
                 .stream().map(AdminRolePermission::getPid).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(pids)) {
+            return Collections.emptyList();
+        }
         return adminPermissionPlusService.listByIds(pids);
     }
 

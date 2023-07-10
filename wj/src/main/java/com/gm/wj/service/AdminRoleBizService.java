@@ -39,8 +39,8 @@ public class AdminRoleBizService {
         List<AdminRoleDTO> roleDTOS = roles.stream().map(adminRole -> {
             AdminRoleDTO adminRoleDTO = new AdminRoleDTO();
             adminRoleDTO.setId(adminRole.getId());
-            adminRoleDTO.setName(adminRoleDTO.getName());
-            adminRoleDTO.setNameZh(adminRoleDTO.getNameZh());
+            adminRoleDTO.setName(adminRole.getName());
+            adminRoleDTO.setNameZh(adminRole.getNameZh());
             adminRoleDTO.setEnabled(adminRole.getEnabled());
             List<AdminPermission> adminPermissions = adminPermissionBizService.listPermsByRoleId(adminRole.getId());
             List<AdminMenu> adminMenus = adminMenuBizService.getMenusByRoleId(adminRole.getId());
