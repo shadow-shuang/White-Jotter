@@ -1,6 +1,6 @@
 package com.gm.wj.filter;
 
-import com.gm.wj.service.AdminPermissionService;
+import com.gm.wj.service.AdminPermissionBizService;
 import com.gm.wj.util.SpringContextUtils;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
@@ -23,7 +23,7 @@ import java.util.Set;
 @Log4j2
 public class URLPathMatchingFilter extends PathMatchingFilter {
     @Autowired
-    AdminPermissionService adminPermissionService;
+    AdminPermissionBizService adminPermissionBizService;
 
     @Override
     protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
@@ -35,8 +35,8 @@ public class URLPathMatchingFilter extends PathMatchingFilter {
             return true;
         }
 
-        if (null == adminPermissionService) {
-            adminPermissionService = SpringContextUtils.getContext().getBean(AdminPermissionService.class);
+        if (null == adminPermissionBizService) {
+            adminPermissionBizService = SpringContextUtils.getContext().getBean(AdminPermissionBizService.class);
         }
 
         String requestAPI = getPathWithinApplication(request);
@@ -49,14 +49,14 @@ public class URLPathMatchingFilter extends PathMatchingFilter {
         }
 
         // 判断访问接口是否需要过滤（数据库中是否有对应信息）
-        boolean needFilter = adminPermissionService.needFilter(requestAPI);
+        boolean needFilter = adminPermissionBizService.needFilter(requestAPI);
         if (!needFilter) {
             return true;
         } else {
             // 判断当前用户是否有相应权限
             boolean hasPermission = false;
             String username = subject.getPrincipal().toString();
-            Set<String> permissionAPIs = adminPermissionService.listPermissionURLsByUser(username);
+            Set<String> permissionAPIs = adminPermissionBizService.listPermissionURLsByUser(username);
             for (String api : permissionAPIs) {
                 // 匹配前缀
                 if (requestAPI.startsWith(api)) {

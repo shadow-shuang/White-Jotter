@@ -1,40 +1,35 @@
 package com.gm.wj.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.io.Serializable;
 import lombok.Data;
-import lombok.ToString;
-
-import javax.persistence.*;
+import lombok.EqualsAndHashCode;
 
 /**
- * Permission entity.
+ * <p>
+ * 
+ * </p>
  *
- * @author Evan
- * @date 2019/11
+ * @author shuang.wu
+ * @since 2023-07-10
  */
 @Data
-@Entity
-@Table(name = "admin_permission")
-@ToString
-@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
-public class AdminPermission {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+@EqualsAndHashCode(callSuper = false)
+@TableName("admin_permission")
+public class AdminPermission implements Serializable {
 
-    /**
-     * Permission name;
-     */
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
     private String name;
 
-    /**
-     * Permission's description(in Chinese)
-     */
-    private String desc_;
+    private String desc;
 
-    /**
-     * The path which triggers permission check.
-     */
     private String url;
+
+
 }

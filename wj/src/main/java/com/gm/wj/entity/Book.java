@@ -1,64 +1,43 @@
 package com.gm.wj.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.io.Serializable;
 import lombok.Data;
-import lombok.ToString;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 
 /**
- * Book entity.
+ * <p>
+ * 
+ * </p>
  *
- * @author Evan
- * @date 2019/4
+ * @author shuang.wu
+ * @since 2023-07-10
  */
 @Data
-@Entity
-@Table(name = "book")
-@ToString
-@JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+@EqualsAndHashCode(callSuper = false)
+@TableName("book")
+public class Book implements Serializable {
 
-    /**
-     * Title of the book.
-     */
-    private String title;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Author name.
-     */
-    private String author;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
-    /**
-     * Publication date.
-     */
-    private String date;
-
-    /**
-     * Press.
-     */
-    private String press;
-
-    /**
-     * Abstract of the book.
-     */
-    private String abs;
-
-    /**
-     * The url of the book's cover.
-     */
     private String cover;
 
-    /**
-     * Category id.
-     */
-    @ManyToOne
-    @JoinColumn(name="cid")
-    private Category category;
+    private String title;
+
+    private String author;
+
+    private String date;
+
+    private String press;
+
+    private String abs;
+
+    private Integer cid;
+
+
 }

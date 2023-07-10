@@ -1,10 +1,10 @@
 package com.gm.wj.service;
 
-import com.gm.wj.dao.AdminMenuDAO;
 import com.gm.wj.entity.AdminMenu;
 import com.gm.wj.entity.AdminRoleMenu;
 import com.gm.wj.entity.AdminUserRole;
 import com.gm.wj.entity.User;
+import com.gm.wj.service.plus.AdminMenuPlusService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,33 +17,36 @@ import java.util.stream.Collectors;
  * @date 2019/10
  */
 @Service
-public class AdminMenuService {
+public class AdminMenuBizService {
     @Autowired
-    AdminMenuDAO adminMenuDAO;
+    private AdminMenuPlusService adminMenuPlusService;
     @Autowired
-    UserService userService;
+    private UserBizService userBizService;
     @Autowired
-    AdminUserRoleService adminUserRoleService;
+    private AdminUserRoleBizService adminUserRoleBizService;
     @Autowired
-    AdminRoleMenuService adminRoleMenuService;
+    private AdminRoleMenuBizService adminRoleMenuBizService;
 
     public List<AdminMenu> getAllByParentId(int parentId) {
-        return adminMenuDAO.findAllByParentId(parentId);
+        return adminMenuPlusService.lambdaQuery()
+                .eq(AdminMenu::getParentId, parentId)
+                .list();
     }
 
     public List<AdminMenu> getMenusByCurrentUser() {
         // Get current user in DB.
         String username = SecurityUtils.getSubject().getPrincipal().toString();
-        User user = userService.findByUsername(username);
+        User user = userBizService.findByUsername(username);
 
         // Get roles' ids of current user.
-        List<Integer> rids = adminUserRoleService.listAllByUid(user.getId())
+        List<Integer> rids = adminUserRoleBizService.listAllByUid(user.getId())
                 .stream().map(AdminUserRole::getRid).collect(Collectors.toList());
 
         // Get menu items of these roles.
-        List<Integer> menuIds = adminRoleMenuService.findAllByRid(rids)
+        List<Integer> menuIds = adminRoleMenuBizService.findAllByRid(rids)
                 .stream().map(AdminRoleMenu::getMid).collect(Collectors.toList());
-        List<AdminMenu> menus = adminMenuDAO.findAllById(menuIds).stream().distinct().collect(Collectors.toList());
+
+        List<AdminMenu> menus = adminMenuPlusService.listByIds(menuIds).stream().distinct().collect(Collectors.toList());
 
         // Adjust the structure of the menu.
         handleMenus(menus);
@@ -51,11 +54,12 @@ public class AdminMenuService {
     }
 
     public List<AdminMenu> getMenusByRoleId(int rid) {
-        List<Integer> menuIds = adminRoleMenuService.findAllByRid(rid)
+        List<Integer> menuIds = adminRoleMenuBizService.findAllByRid(rid)
                 .stream().map(AdminRoleMenu::getMid).collect(Collectors.toList());
-        List<AdminMenu> menus = adminMenuDAO.findAllById(menuIds);
 
+        List<AdminMenu> menus = adminMenuPlusService.listByIds(menuIds);
         handleMenus(menus);
+
         return menus;
     }
 

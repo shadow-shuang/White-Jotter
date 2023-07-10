@@ -19,7 +19,7 @@ public class MybatisPlusGenerator {
 //        String projectPath = System.getProperty("user.dir");
 //        projectPathth = "F:\\meditrusthealthProject\\fast-insurance-admin-service\\fast-insurance-admin-service-web";
 
-        String projectPath = "D:\\ideaProjects\\risk\\mth-insurance-intellect-pre-service\\mth-insurance-intellect-pre-service-web";
+        String projectPath = "D:\\ideaProjects\\CMS\\White-Jotter\\wj";
 
         //生成路径
         gc.setOutputDir(projectPath + "/src/main/java/");
@@ -39,10 +39,10 @@ public class MybatisPlusGenerator {
 
         //2、数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://test-fast-mysql.meditrusthealth.com:3306/mth_insurance_intellect?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai");
+        dsc.setUrl("jdbc:mysql://124.222.148.65:3306/bracelet_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
-        dsc.setUsername("fast");
-        dsc.setPassword("mxjk@123");
+        dsc.setUsername("bracelet");
+        dsc.setPassword("bracelet1993.");
         mpg.setDataSource(dsc);
 
         // 3、包配置
@@ -51,8 +51,8 @@ public class MybatisPlusGenerator {
         pc.setParent("");
         pc.setEntity("com.gm.wj.entity2");
         pc.setService("com.gm.wj.service2.plus");
-        pc.setMapper("com.meditrusthealth.mth.insurance.intellect.mapper.plus");
-        pc.setServiceImpl("com.meditrusthealth.mth.insurance.intellect.service.plus.impl");
+        pc.setMapper("com.gm.wj.mapper.plus");
+        pc.setServiceImpl("com.gm.wj.service2.plus.impl");
         pc.setController("");
         pc.setXml("");
         pc.setXml("/resources/mapper/");

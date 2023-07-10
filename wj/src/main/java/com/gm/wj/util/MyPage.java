@@ -35,6 +35,13 @@ public class MyPage<T> implements Iterable<T>, Serializable {
         this.numberOfElements = page.getNumberOfElements();
     }
 
+    public MyPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> page) {
+        this.content = page.getRecords();
+        this.totalElements = page.getTotal();
+        this.pageNumber = (int) page.getCurrent();
+        this.pageSize = (int) page.getSize();
+    }
+
     //是否有前一页
     public boolean hasPrevious() {
         return getPageNumber() > 0;

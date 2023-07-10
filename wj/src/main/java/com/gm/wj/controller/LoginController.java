@@ -3,7 +3,7 @@ package com.gm.wj.controller;
 import com.gm.wj.entity.User;
 import com.gm.wj.result.Result;
 import com.gm.wj.result.ResultFactory;
-import com.gm.wj.service.UserService;
+import com.gm.wj.service.UserBizService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -12,8 +12,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
-
-import javax.validation.Valid;
 
 /**
  * Login and register controller.
@@ -25,7 +23,7 @@ import javax.validation.Valid;
 public class LoginController {
 
     @Autowired
-    UserService userService;
+    UserBizService userBizService;
 
     @PostMapping("/api/login")
     public Result login(@RequestBody User requestUser) {
@@ -38,8 +36,8 @@ public class LoginController {
         usernamePasswordToken.setRememberMe(true);
         try {
             subject.login(usernamePasswordToken);
-            User user = userService.findByUsername(username);
-            if (!user.isEnabled()) {
+            User user = userBizService.findByUsername(username);
+            if (!user.getEnabled()) {
                 return ResultFactory.buildFailResult("该用户已被禁用");
             }
             return ResultFactory.buildSuccessResult(username);
@@ -52,7 +50,7 @@ public class LoginController {
 
     @PostMapping("/api/register")
     public Result register(@RequestBody User user) {
-        int status = userService.register(user);
+        int status = userBizService.register(user);
         switch (status) {
             case 0:
                 return ResultFactory.buildFailResult("用户名和密码不能为空");

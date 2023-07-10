@@ -1,0 +1,20 @@
+package com.gm.wj.service.plus.impl;
+
+import com.gm.wj.entity.AdminRolePermission;
+import com.gm.wj.mapper.plus.AdminRolePermissionPlusMapper;
+import com.gm.wj.service.plus.AdminRolePermissionPlusService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
+/**
+ * <p>
+ *  服务实现类
+ * </p>
+ *
+ * @author shuang.wu
+ * @since 2023-07-10
+ */
+@Service
+public class AdminRolePermissionPlusServiceImpl extends ServiceImpl<AdminRolePermissionPlusMapper, AdminRolePermission> implements AdminRolePermissionPlusService {
+
+}

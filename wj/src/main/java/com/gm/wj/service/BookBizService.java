@@ -1,12 +1,10 @@
 package com.gm.wj.service;
 
-import com.gm.wj.dao.BookDAO;
 import com.gm.wj.entity.Book;
-import com.gm.wj.entity.Category;
 import com.gm.wj.redis.RedisService;
+import com.gm.wj.service.plus.BookPlusService;
 import com.gm.wj.util.CastUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +14,10 @@ import java.util.List;
  * @date 2019/4
  */
 @Service
-public class BookService {
+public class BookBizService {
     @Autowired
-    private BookDAO bookDAO;
-    @Autowired
-    private CategoryService categoryService;
+    private BookPlusService bookPlusService;
+
     @Autowired
     private RedisService redisService;
 
@@ -30,8 +27,7 @@ public class BookService {
         Object bookCache = redisService.get(key);
 
         if (bookCache == null) {
-            Sort sort = new Sort(Sort.Direction.DESC, "id");
-            books = bookDAO.findAll(sort);
+            books = bookPlusService.lambdaQuery().orderByDesc(Book::getId).list();
             redisService.set(key, books);
         } else {
             books = CastUtils.objectConvertToList(bookCache, Book.class);
@@ -39,20 +35,11 @@ public class BookService {
         return books;
     }
 
-//    直接用注解实现缓存
-//    @Cacheable(value = RedisConfig.REDIS_KEY_DATABASE)
-//    public List<Book> list() {
-//        List<Book> books;
-//        Sort sort = new Sort(Sort.Direction.DESC, "id");
-//        books = bookDAO.findAll(sort);
-//        return books;
-//    }
-
     public void addOrUpdate(Book book) {
         redisService.delete("booklist");
-        bookDAO.save(book);
+        bookPlusService.save(book);
         try {
-            Thread.sleep(500);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -61,9 +48,9 @@ public class BookService {
 
     public void deleteById(int id) {
         redisService.delete("booklist");
-        bookDAO.deleteById(id);
+        bookPlusService.removeById(id);
         try {
-            Thread.sleep(500);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -71,11 +58,15 @@ public class BookService {
     }
 
     public List<Book> listByCategory(int cid) {
-        Category category = categoryService.get(cid);
-        return bookDAO.findAllByCategory(category);
+        List<Book> books = bookPlusService.lambdaQuery().eq(Book::getCid, cid).list();
+        return books;
     }
 
     public List<Book> Search(String keywords) {
-        return bookDAO.findAllByTitleLikeOrAuthorLike('%' + keywords + '%', '%' + keywords + '%');
+        return bookPlusService.lambdaQuery()
+                .like(Book::getTitle, keywords)
+                .or()
+                .like(Book::getAuthor, keywords)
+                .list();
     }
 }

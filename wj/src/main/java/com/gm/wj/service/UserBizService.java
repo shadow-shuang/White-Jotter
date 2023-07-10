@@ -1,9 +1,9 @@
 package com.gm.wj.service;
 
-import com.gm.wj.dao.UserDAO;
 import com.gm.wj.dto.UserDTO;
 import com.gm.wj.entity.AdminRole;
 import com.gm.wj.entity.User;
+import com.gm.wj.service.plus.UserPlusService;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +18,22 @@ import java.util.stream.Collectors;
  * @date 2019/4
  */
 @Service
-public class UserService {
+public class UserBizService {
     @Autowired
-    UserDAO userDAO;
+    private UserPlusService userPlusService;
     @Autowired
-    AdminRoleService adminRoleService;
+    private AdminRoleBizService adminRoleBizService;
     @Autowired
-    AdminUserRoleService adminUserRoleService;
+    private AdminUserRoleBizService adminUserRoleBizService;
 
     public List<UserDTO> list() {
-        List<User> users = userDAO.findAll();
-
-        // Find all roles in DB to enable JPA persistence context.
-//        List<AdminRole> allRoles = adminRoleService.findAll();
+        List<User> users = userPlusService.query().list();
 
         List<UserDTO> userDTOS = users
                 .stream().map(user -> (UserDTO) new UserDTO().convertFrom(user)).collect(Collectors.toList());
 
         userDTOS.forEach(u -> {
-            List<AdminRole> roles = adminRoleService.listRolesByUser(u.getUsername());
+            List<AdminRole> roles = adminRoleBizService.listRolesByUser(u.getUsername());
             u.setRoles(roles);
         });
 
@@ -44,16 +41,18 @@ public class UserService {
     }
 
     public boolean isExist(String username) {
-        User user = userDAO.findByUsername(username);
+        User user = userPlusService.lambdaQuery().eq(User::getUsername, username).one();
         return null != user;
     }
 
     public User findByUsername(String username) {
-        return userDAO.findByUsername(username);
+        return userPlusService.lambdaQuery().eq(User::getUsername, username).one();
     }
 
     public User get(String username, String password) {
-        return userDAO.getByUsernameAndPassword(username, password);
+        return userPlusService.lambdaQuery().eq(User::getUsername, username)
+                .eq(User::getPassword, password)
+                .one();
     }
 
     public int register(User user) {
@@ -91,37 +90,36 @@ public class UserService {
         user.setSalt(salt);
         user.setPassword(encodedPassword);
 
-        userDAO.save(user);
-
+        userPlusService.save(user);
         return 1;
     }
 
     public void updateUserStatus(User user) {
-        User userInDB = userDAO.findByUsername(user.getUsername());
-        userInDB.setEnabled(user.isEnabled());
-        userDAO.save(userInDB);
+        User userInDB = userPlusService.lambdaQuery().eq(User::getUsername, user.getUsername()).one();
+        userInDB.setEnabled(user.getEnabled());
+        userPlusService.save(userInDB);
     }
 
-    public User resetPassword(User user) {
-        User userInDB = userDAO.findByUsername(user.getUsername());
+    public boolean resetPassword(User user) {
+        User userInDB = userPlusService.lambdaQuery().eq(User::getUsername, user.getUsername()).one();
         String salt = new SecureRandomNumberGenerator().nextBytes().toString();
         int times = 2;
         userInDB.setSalt(salt);
         String encodedPassword = new SimpleHash("md5", "123", salt, times).toString();
         userInDB.setPassword(encodedPassword);
-        return userDAO.save(userInDB);
+        return userPlusService.save(userInDB);
     }
 
-    public void editUser(User user) {
-        User userInDB = userDAO.findByUsername(user.getUsername());
+    public void editUser(UserDTO user) {
+        User userInDB = userPlusService.lambdaQuery().eq(User::getUsername, user.getUsername()).one();
         userInDB.setName(user.getName());
         userInDB.setPhone(user.getPhone());
         userInDB.setEmail(user.getEmail());
-        userDAO.save(userInDB);
-        adminUserRoleService.saveRoleChanges(userInDB.getId(), user.getRoles());
+        userPlusService.save(userInDB);
+        adminUserRoleBizService.saveRoleChanges(userInDB.getId(), user.getRoles());
     }
 
     public void deleteById(int id) {
-        userDAO.deleteById(id);
+        userPlusService.removeById(id);
     }
 }

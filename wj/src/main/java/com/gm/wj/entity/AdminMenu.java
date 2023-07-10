@@ -1,62 +1,44 @@
 package com.gm.wj.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.ToString;
-
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.io.Serializable;
 import java.util.List;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
- * Menu entity
+ * <p>
+ * 
+ * </p>
  *
- * @author Evan
- * @date 2019/11
+ * @author shuang.wu
+ * @since 2023-07-10
  */
 @Data
-@Entity
-@Table(name = "admin_menu")
-@ToString
-@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
-public class AdminMenu {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+@EqualsAndHashCode(callSuper = false)
+@TableName("admin_menu")
+public class AdminMenu implements Serializable {
 
-    /**
-     * Menu access path.
-     */
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
     private String path;
 
-    /**
-     * Menu name.
-     */
     private String name;
 
-    /**
-     * Menu name in Chinese.
-     */
     private String nameZh;
 
-    /**
-     * Menu icon class(use element-ui icons).
-     */
     private String iconCls;
 
-    /**
-     * Front-end component name corresponding to menu.
-     */
     private String component;
 
-    /**
-     * Parent menu.
-     */
-    private int parentId;
+    private Integer parentId;
 
-    /**
-     * Transient property for storing children menus.
-     */
-    @Transient
     private List<AdminMenu> children;
+
 }

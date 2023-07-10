@@ -1,35 +1,33 @@
 package com.gm.wj.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.io.Serializable;
 import lombok.Data;
-import lombok.ToString;
-
-import javax.persistence.*;
+import lombok.EqualsAndHashCode;
 
 /**
- * Relations between users and role.
+ * <p>
+ * 
+ * </p>
  *
- * @author Evan
- * @date 2019/11
+ * @author shuang.wu
+ * @since 2023-07-10
  */
 @Data
-@Entity
-@Table(name = "admin_user_role")
-@ToString
-@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
-public class AdminUserRole {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+@EqualsAndHashCode(callSuper = false)
+@TableName("admin_user_role")
+public class AdminUserRole implements Serializable {
 
-    /**
-     * User id.
-     */
-    private int uid;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Role id.
-     */
-    private int rid;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
+    private Integer uid;
+
+    private Integer rid;
+
+
 }

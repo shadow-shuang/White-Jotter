@@ -1,11 +1,12 @@
-package com.gm.wj.entity;
+package com.gm.wj.dto;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.gm.wj.entity.AdminMenu;
+import com.gm.wj.entity.AdminPermission;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -17,12 +18,10 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("admin_role")
-public class AdminRole implements Serializable {
+public class AdminRoleDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private String name;
@@ -31,5 +30,7 @@ public class AdminRole implements Serializable {
 
     private Boolean enabled;
 
+    private List<AdminPermission> perms;
 
+    private List<AdminMenu> menus;
 }

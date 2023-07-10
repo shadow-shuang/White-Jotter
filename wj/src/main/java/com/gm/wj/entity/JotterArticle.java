@@ -1,60 +1,42 @@
 package com.gm.wj.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.time.LocalDateTime;
+import java.io.Serializable;
 import lombok.Data;
-import lombok.ToString;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.sql.Date;
+import lombok.EqualsAndHashCode;
 
 /**
- * Article entity.
+ * <p>
+ * 
+ * </p>
  *
- * @author Evan
- * @date 2020/1/14 20:25
+ * @author shuang.wu
+ * @since 2023-07-10
  */
 @Data
-@Entity
-@Table(name = "jotter_article")
-@ToString
-@JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
-public class JotterArticle {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    @NotNull(message = "id 不能为 null")
-    private int id;
+@EqualsAndHashCode(callSuper = false)
+@TableName("jotter_article")
+public class JotterArticle implements Serializable {
 
-    /**
-     * Article title.
-     */
-    @NotEmpty(message = "文章标题不能为空")
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
+
     private String articleTitle;
 
-    /**
-     * Article content after render to html.
-     */
     private String articleContentHtml;
 
-    /**
-     * Article content in markdown syntax.
-     */
     private String articleContentMd;
 
-    /**
-     * Article abstract.
-     */
     private String articleAbstract;
 
-    /**
-     * Article cover's url.
-     */
     private String articleCover;
 
-    /**
-     * Article release date.
-     */
-    private Date articleDate;
+    private LocalDateTime articleDate;
+
+
 }

@@ -1,9 +1,9 @@
 package com.gm.wj.realm;
 
 import com.gm.wj.entity.User;
-import com.gm.wj.service.AdminPermissionService;
-import com.gm.wj.service.AdminRoleService;
-import com.gm.wj.service.UserService;
+import com.gm.wj.service.AdminPermissionBizService;
+import com.gm.wj.service.AdminRoleBizService;
+import com.gm.wj.service.UserBizService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -22,18 +22,18 @@ import java.util.Set;
 public class WJRealm extends AuthorizingRealm {
 
     @Autowired
-    private UserService userService;
+    private UserBizService userBizService;
     @Autowired
-    private AdminPermissionService adminPermissionService;
+    private AdminPermissionBizService adminPermissionBizService;
     @Autowired
-    private AdminRoleService adminRoleService;
+    private AdminRoleBizService adminRoleBizService;
 
     // 重写获取授权信息方法
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         // 获取当前用户的所有权限
         String username = principalCollection.getPrimaryPrincipal().toString();
-        Set<String> permissions = adminPermissionService.listPermissionURLsByUser(username);
+        Set<String> permissions = adminPermissionBizService.listPermissionURLsByUser(username);
 
         // 将权限放入授权信息中
         SimpleAuthorizationInfo s = new SimpleAuthorizationInfo();
@@ -45,7 +45,7 @@ public class WJRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String userName = token.getPrincipal().toString();
-        User user = userService.findByUsername(userName);
+        User user = userBizService.findByUsername(userName);
         if (ObjectUtils.isEmpty(user)) {
             throw new UnknownAccountException();
         }

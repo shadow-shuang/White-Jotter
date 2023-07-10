@@ -2,7 +2,7 @@ package com.gm.wj.controller;
 
 import com.gm.wj.result.Result;
 import com.gm.wj.result.ResultFactory;
-import com.gm.wj.service.AdminMenuService;
+import com.gm.wj.service.AdminMenuBizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class MenuController {
     @Autowired
-    AdminMenuService adminMenuService;
+    AdminMenuBizService adminMenuBizService;
 
     @GetMapping("/api/menu")
     public Result menu() {
-        return ResultFactory.buildSuccessResult(adminMenuService.getMenusByCurrentUser());
+        return ResultFactory.buildSuccessResult(adminMenuBizService.getMenusByCurrentUser());
     }
 
     @GetMapping("/api/admin/role/menu")
     public Result listAllMenus() {
-        return ResultFactory.buildSuccessResult(adminMenuService.getMenusByRoleId(1));
+        return ResultFactory.buildSuccessResult(adminMenuBizService.getMenusByRoleId(1));
     }
 }
